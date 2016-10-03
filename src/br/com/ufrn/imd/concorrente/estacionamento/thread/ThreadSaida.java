@@ -27,13 +27,20 @@ public class ThreadSaida extends Thread {
 			notifyAll();			
 		}
 		while (e.isDisponivel()) {
+			if(e.getOcupacao() == 0){
+				e.setDisponivel(true);
+				notifyAll();
+			}
+			if(e.getOcupacao() - 1 == e.getOcupacao()){
+				e.setDisponivel(true);
+				notifyAll();
+			}
 			if(e.getOcupacao() - 1 < 0){
-				e.setOcupacao(1);
+				e.setOcupacao(0);
+				e.setDisponivel(true);
 				notifyAll();
 			} else {
-				int aux = e.getOcupacao();
-				aux--;
-				e.setOcupacao(aux);
+				e.retiraCarro();
 				System.out.println("Saída -> Estacionamento " + e.getNome() + " Ocupação: "
 						+ e.getOcupacao());
 				Thread.sleep((long) (Math.random() * 1000));

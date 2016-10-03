@@ -19,28 +19,35 @@ public class ThreadEntrada extends Thread {
 		this.estacionamento = estacionamento;
 	}
 
-	public synchronized void entradaDeCarro() throws InterruptedException {
-		while (!estacionamento.isDisponivel()) {
+	public synchronized void entradaDeCarro(Estacionamento e) throws InterruptedException {
+		while (!e.isDisponivel()) {
 			wait();
 		}
-		while (estacionamento.isDisponivel()) {
-			if(estacionamento.getOcupacao() < estacionamento.getCapacidade()){
-				int aux = estacionamento.getOcupacao();
-				aux++;
-				estacionamento.setOcupacao(aux);	
+		while (e.isDisponivel()) {
+			if(e.getOcupacao() == e.getCapacidade()){
+				e.setDisponivel(false);
+				wait();
+			}
+			if(e.getOcupacao() + 1 == e.getOcupacao()){
+				e.setDisponivel(true);
+				wait();
+			}
+			if(e.getOcupacao() < e.getCapacidade()){
+				e.adicionaCarro();
+				e.setDisponivel(true);
 				notifyAll();
 			} else {
-				estacionamento.setDisponivel(false);
+				e.setDisponivel(false);
 				notifyAll();
 			}
 			notifyAll();
-			System.out.println("Entrada -> Estacionamento " + estacionamento.getNome() + " Ocupação: "
-					+ estacionamento.getOcupacao());
+			System.out.println("Entrada -> Estacionamento " + e.getNome() + " Ocupação: "
+					+ e.getOcupacao());
 			Thread.sleep((long) (Math.random() * 1000));
 		}
 		notifyAll();
-		if(estacionamento.getOcupacao() <= estacionamento.getCapacidade()){
-			entradaDeCarro();
+		if(e.getOcupacao() <= e.getCapacidade()){
+			entradaDeCarro(e);
 		}
 	}
 
@@ -48,7 +55,7 @@ public class ThreadEntrada extends Thread {
 	@Override
 	public void run() {
 		try {
-			entradaDeCarro();
+			entradaDeCarro(estacionamento);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

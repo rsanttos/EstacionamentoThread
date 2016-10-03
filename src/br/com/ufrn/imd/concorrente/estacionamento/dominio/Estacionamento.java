@@ -43,4 +43,12 @@ public class Estacionamento {
 		this.ocupacao = ocupacao;
 	}
 	
+	public void adicionaCarro(){
+		this.ocupacao++;
+	}
+	
+	public void retiraCarro(){
+		this.ocupacao--;
+	}
+	
 }
